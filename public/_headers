@@ -1,0 +1,9 @@
+# _headers file
+/public/*.json
+  Cache-Control: public, max-age=31536000
+
+/public/sounds/*.wav
+  Cache-Control: public, max-age=31536000
+
+/public/images/*.jpg
+  Cache-Control: public, max-age=31536000
