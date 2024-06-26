@@ -2,7 +2,7 @@
   <div class="max-w-[1100px] mx-auto bg-white p-6 rounded shadow-md">
     <div class="flex flex-col items-center">
       <div class="mb-4">
-        <img :src="`/public${currentFlag.flag}`" alt="Country Flag" class="w-40 h-auto"/>
+        <img :src="`${currentFlag.flag}`" alt="Country Flag" class="w-40 h-auto"/>
       </div>
       <div class="mb-4 w-full">
         <input v-model="userCountry" type="text" placeholder="Enter country name" class="w-full p-2 border rounded"/>
