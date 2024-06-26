@@ -1,4 +1,5 @@
 <template>
+  <div ref="svgContainer" v-html="worldSvg"></div>
   <div class="max-w-[1100px] mx-auto bg-white p-6 rounded shadow-md">
     <div class="flex flex-col items-center">
       <div class="mb-4">
@@ -31,12 +32,15 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import worldSvg from '../assets/world.svg?raw';
 
 const flags = ref([]);
 const currentFlag = ref({});
 const userCountry = ref('');
 const userCapital = ref('');
 const showResult = ref(false);
+const svgContainer = ref(null);
+
 
 const selectRandomFlag = () => {
   if (flags.value.length > 0) {
@@ -70,7 +74,30 @@ const fetchFlags = async () => {
   }
 };
 
+const addSvgEventListeners = () => {
+  const paths = svgContainer.value.querySelectorAll('path');
+  paths.forEach(path => {
+    path.addEventListener('click', () => {
+      // Reset the fill color of all paths
+      paths.forEach(p => {
+        p.style.fill = ''; // Reset to the original color
+      });
+
+      // Highlight the selected country
+      const country = path.parentElement.getAttribute('data-country');
+      paths.forEach(p => {
+        if (p.parentElement.getAttribute('data-country') === country) {
+          p.style.fill = 'yellow'; // Change this color to your desired highlight color
+        }
+      });
+    });
+  });
+};
+
+
 onMounted(() => {
   fetchFlags();
+  addSvgEventListeners();
+
 });
 </script>
