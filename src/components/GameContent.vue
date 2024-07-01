@@ -5,19 +5,23 @@
         <div class="mb-8">
           <img :src="`${currentFlag.flag}`" alt="Country Flag" class="w-40 h-auto border border-gray-400"/>
         </div>
-        <div class="mb-4 w-60 relative">
+        <div class="mb-4 w-60">
           <label for="">Pays:</label>
-          <input v-model="userCountry" type="text" placeholder="Entrez" class="w-full p-2 border rounded"/>
-          <span class="absolute right-0 translate-x-full top-1/2 -translate-y-1/2 transform pl-4" v-if="showResult" :class="{'text-green-500': isCountryCorrect, 'text-red-500': !isCountryCorrect}">
-            {{ currentFlag.country }}
-          </span>
+          <div class="relative">
+            <input v-model="userCountry" type="text" placeholder="Entrez" class="w-full p-2 border rounded"/>
+            <span class="absolute right-0 translate-x-full top-1/2 -translate-y-1/2 transform pl-4" v-if="showResult" :class="{'text-green-500': isCountryCorrect, 'text-red-500': !isCountryCorrect}">
+              {{ currentFlag.country }}
+            </span>
+          </div>
         </div>
-        <div class="mb-4 w-60 relative">
+        <div class="mb-4 w-60">
           <label for="">Capitale:</label>
-          <input v-model="userCapital" type="text" placeholder="Entrez" class="w-full p-2 border rounded"/>
-          <span class="absolute right-0 translate-x-full top-1/2 -translate-y-1/2 transform pl-4" v-if="showResult" :class="{'text-green-500': isCapitalCorrect, 'text-red-500': !isCapitalCorrect}">
-            {{ currentFlag.capital }}
-          </span>
+          <div class="relative">
+            <input v-model="userCapital" type="text" placeholder="Entrez" class="w-full p-2 border rounded"/>
+            <span class="absolute right-0 translate-x-full top-1/2 -translate-y-1/2 transform pl-4" v-if="showResult" :class="{'text-green-500': isCapitalCorrect, 'text-red-500': !isCapitalCorrect}">
+              {{ currentFlag.capital }}
+            </span>
+          </div>
         </div>
         <div class="h-[400px] overflow-hidden mt-8" ref="svgContainer" v-html="worldSvg"></div>
         <div v-if="showResult" class="mt-4 w-40">
@@ -47,8 +51,10 @@ const isCapitalCorrect = ref(false);
 const svgContainer = ref(null);
 const selectedCountry = ref('');
 const isSubmitted = ref(false);
+let panZoomInstance = null;
 
 const normalizeText = (text) => {
+  if (!text) return '';
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 };
 
@@ -61,6 +67,7 @@ const selectRandomFlag = () => {
     showResult.value = false;
     selectedCountry.value = '';
     isSubmitted.value = false;
+    resetSvgColors();
   }
 };
 
@@ -74,14 +81,17 @@ const checkAnswer = () => {
   isCountryCorrect.value = (normalizedUserCountry === normalizedCountry);
   isCapitalCorrect.value = (normalizedUserCapital === normalizedCapital);
 
-  if (isCountryCorrect.value && isCapitalCorrect.value && normalizedSelectedCountry === normalizedCountry) {
-    alert('Correct!');
-  } else {
-    showResult.value = true;
-  }
-
+  showResult.value = true;
   isSubmitted.value = true;
   highlightCorrectCountry();
+  zoomToCorrectCountry();
+};
+
+const resetSvgColors = () => {
+  const paths = svgContainer.value.querySelectorAll('path');
+  paths.forEach(path => {
+    path.style.fill = ''; // Reset to the original color
+  });
 };
 
 const fetchFlags = async () => {
@@ -101,6 +111,23 @@ const highlightCorrectCountry = () => {
     const normalizedCountry = normalizeText(country);
     if (normalizedCountry === normalizeText(currentFlag.value.country)) {
       path.style.fill = 'green'; // Highlight the correct country with green color
+    }
+  });
+};
+
+const zoomToCorrectCountry = () => {
+  console.log('Zooming to correct country');
+  const paths = svgContainer.value.querySelectorAll('path');
+  paths.forEach(path => {
+    const country = path.parentElement.getAttribute('data-country');
+    const normalizedCountry = normalizeText(country);
+    if (normalizedCountry === normalizeText(currentFlag.value.country)) {
+      const bbox = path.getBBox();
+      const centerX = bbox.x + bbox.width / 2;
+      const centerY = bbox.y + bbox.height / 2;
+      panZoomInstance.zoomAtPoint(2, {x: centerX, y: centerY});
+      const { realZoom } = panZoomInstance.getSizes();
+      panZoomInstance.pan({x: (panZoomInstance.getSizes().width / 2) - (centerX * realZoom), y: (panZoomInstance.getSizes().height / 3.5) - (centerY * realZoom)});
     }
   });
 };
@@ -132,7 +159,7 @@ const addSvgEventListeners = () => {
 const initializeSvgPanZoom = () => {
   const svgElement = svgContainer.value.querySelector('svg');
   if (svgElement) {
-    svgPanZoom(svgElement, {
+    panZoomInstance = svgPanZoom(svgElement, {
       zoomEnabled: true,
       controlIconsEnabled: false,
       fit: true,
