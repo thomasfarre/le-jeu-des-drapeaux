@@ -13,7 +13,7 @@
       v-if="gameStarted"
     />
 
-    <div class="px-4 pt-12 pb-4 mx-auto md:pt-4 text-center">
+    <div v-if="!gameStarted" class="px-4 pt-12 pb-4 mx-auto md:pt-4 text-center">
       <div class="pt-64">
         <h1 class="text-yellow-400 title">Le jeu des drapeaux</h1>
       </div>

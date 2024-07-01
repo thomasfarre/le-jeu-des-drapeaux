@@ -1,28 +1,30 @@
 <template>
-  <div ref="svgContainer" v-html="worldSvg"></div>
-  <div class="max-w-[1100px] mx-auto bg-white p-6 rounded shadow-md">
-    <div class="flex flex-col items-center">
-      <div class="mb-4">
-        <img :src="`${currentFlag.flag}`" alt="Country Flag" class="w-40 h-auto"/>
-      </div>
-      <div class="mb-4 w-full">
-        <input v-model="userCountry" type="text" placeholder="Enter country name" class="w-full p-2 border rounded"/>
-      </div>
-      <div class="mb-4 w-full">
-        <input v-model="userCapital" type="text" placeholder="Enter capital name" class="w-full p-2 border rounded"/>
-      </div>
-      <div class="mb-4 w-full">
-        <button @click="checkAnswer" class="w-full bg-blue-500 text-white p-2 rounded">Submit</button>
-      </div>
-      <div v-if="showResult" class="mt-4 text-center">
-        <div>
-          <strong>Country:</strong> {{ currentFlag.country }}
+  <div class="pt-8">
+    <div class="max-w-[1100px] mx-auto bg-white p-6 rounded shadow-md overflow-hidden">
+      <div class="flex flex-col items-center">
+        <div class="mb-8">
+          <img :src="`${currentFlag.flag}`" alt="Country Flag" class="w-40 h-auto border border-gray-400"/>
         </div>
-        <div>
-          <strong>Capital:</strong> {{ currentFlag.capital }}
+        <div class="mb-4 w-60 relative">
+          <label for="">Pays:</label>
+          <input v-model="userCountry" type="text" placeholder="Entrez" class="w-full p-2 border rounded"/>
+          <span class="absolute right-0 translate-x-full top-1/2 -translate-y-1/2 transform pl-4" v-if="showResult" :class="{'text-green-500': isCountryCorrect, 'text-red-500': !isCountryCorrect}">
+            {{ currentFlag.country }}
+          </span>
         </div>
-        <div class="mt-4">
-          <button @click="selectRandomFlag" class="w-full bg-green-500 text-white p-2 rounded">Next</button>
+        <div class="mb-4 w-60 relative">
+          <label for="">Capitale:</label>
+          <input v-model="userCapital" type="text" placeholder="Entrez" class="w-full p-2 border rounded"/>
+          <span class="absolute right-0 translate-x-full top-1/2 -translate-y-1/2 transform pl-4" v-if="showResult" :class="{'text-green-500': isCapitalCorrect, 'text-red-500': !isCapitalCorrect}">
+            {{ currentFlag.capital }}
+          </span>
+        </div>
+        <div class="h-[400px] overflow-hidden mt-8" ref="svgContainer" v-html="worldSvg"></div>
+        <div v-if="showResult" class="mt-4 w-40">
+          <button @click="selectRandomFlag" class="w-full bg-blue-500 text-white p-2 rounded">Suivant</button>
+        </div>
+        <div v-else class="mb-4 w-40">
+          <button @click="checkAnswer" class="w-full bg-green-500 text-white p-2 rounded">Valider</button>
         </div>
       </div>
     </div>
@@ -33,14 +35,22 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import worldSvg from '../assets/world.svg?raw';
+import svgPanZoom from 'svg-pan-zoom';
 
 const flags = ref([]);
 const currentFlag = ref({});
 const userCountry = ref('');
 const userCapital = ref('');
 const showResult = ref(false);
+const isCountryCorrect = ref(false);
+const isCapitalCorrect = ref(false);
 const svgContainer = ref(null);
+const selectedCountry = ref('');
+const isSubmitted = ref(false);
 
+const normalizeText = (text) => {
+  return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+};
 
 const selectRandomFlag = () => {
   if (flags.value.length > 0) {
@@ -49,55 +59,103 @@ const selectRandomFlag = () => {
     userCountry.value = '';
     userCapital.value = '';
     showResult.value = false;
+    selectedCountry.value = '';
+    isSubmitted.value = false;
   }
 };
 
 const checkAnswer = () => {
-  if (
-    userCountry.value.toLowerCase() === currentFlag.value.country.toLowerCase() &&
-    userCapital.value.toLowerCase() === currentFlag.value.capital.toLowerCase()
-  ) {
+  const normalizedUserCountry = normalizeText(userCountry.value);
+  const normalizedUserCapital = normalizeText(userCapital.value);
+  const normalizedCountry = normalizeText(currentFlag.value.country);
+  const normalizedCapital = normalizeText(currentFlag.value.capital);
+  const normalizedSelectedCountry = normalizeText(selectedCountry.value);
+
+  isCountryCorrect.value = (normalizedUserCountry === normalizedCountry);
+  isCapitalCorrect.value = (normalizedUserCapital === normalizedCapital);
+
+  if (isCountryCorrect.value && isCapitalCorrect.value && normalizedSelectedCountry === normalizedCountry) {
     alert('Correct!');
   } else {
     showResult.value = true;
   }
+
+  isSubmitted.value = true;
+  highlightCorrectCountry();
 };
 
 const fetchFlags = async () => {
   try {
     const response = await axios.get('/data/data.json');
     flags.value = response.data;
-    console.log(flags.value)
     selectRandomFlag();
   } catch (error) {
     console.error('Error fetching flags:', error);
   }
 };
 
+const highlightCorrectCountry = () => {
+  const paths = svgContainer.value.querySelectorAll('path');
+  paths.forEach(path => {
+    const country = path.parentElement.getAttribute('data-country');
+    const normalizedCountry = normalizeText(country);
+    if (normalizedCountry === normalizeText(currentFlag.value.country)) {
+      path.style.fill = 'green'; // Highlight the correct country with green color
+    }
+  });
+};
+
 const addSvgEventListeners = () => {
   const paths = svgContainer.value.querySelectorAll('path');
   paths.forEach(path => {
     path.addEventListener('click', () => {
-      // Reset the fill color of all paths
-      paths.forEach(p => {
-        p.style.fill = ''; // Reset to the original color
-      });
+      if (!isSubmitted.value) {
+        // Reset the fill color of all paths
+        paths.forEach(p => {
+          p.style.fill = ''; // Reset to the original color
+        });
 
-      // Highlight the selected country
-      const country = path.parentElement.getAttribute('data-country');
-      paths.forEach(p => {
-        if (p.parentElement.getAttribute('data-country') === country) {
-          p.style.fill = 'yellow'; // Change this color to your desired highlight color
-        }
-      });
+        // Highlight the selected country
+        const country = path.parentElement.getAttribute('data-country');
+        const normalizedCountry = normalizeText(country);
+        paths.forEach(p => {
+          if (normalizeText(p.parentElement.getAttribute('data-country')) === normalizedCountry) {
+            p.style.fill = 'yellow'; // Change this color to your desired highlight color
+          }
+        });
+        selectedCountry.value = country; // Store the selected country
+      }
     });
   });
 };
 
+const initializeSvgPanZoom = () => {
+  const svgElement = svgContainer.value.querySelector('svg');
+  if (svgElement) {
+    svgPanZoom(svgElement, {
+      zoomEnabled: true,
+      controlIconsEnabled: false,
+      fit: true,
+      center: false,
+      zoomScaleSensitivity: 0.4, // Increase this value to make zoom faster
+      minZoom: 0.5,
+      maxZoom: 10
+    });
+  }
+};
 
 onMounted(() => {
   fetchFlags();
   addSvgEventListeners();
-
+  initializeSvgPanZoom();
 });
 </script>
+
+<style scoped>
+.text-green-500 {
+  color: #48bb78;
+}
+.text-red-500 {
+  color: #f56565;
+}
+</style>
