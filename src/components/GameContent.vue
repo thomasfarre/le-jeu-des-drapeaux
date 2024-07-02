@@ -1,29 +1,41 @@
 <template>
-  <div class="pt-8">
+  <div class="pt-4">
     <div class="max-w-[1100px] mx-auto bg-white p-6 rounded shadow-md overflow-hidden">
       <div class="flex flex-col items-center">
-        <div class="mb-8">
+        <div class="mb-6 flex flex-col items-center justify-center space-y-6">
+          <span class="text-xl font-bold">
+            Trouver le nom du pays, la capital et la localisation par rapport à ce drapeau
+          </span>
           <img :src="`${currentFlag.flag}`" alt="Country Flag" class="w-40 h-auto border border-gray-400"/>
         </div>
-        <div class="mb-4 w-60">
+        <div class="mb-2 relative">
+          <span class="text-4xl text-green-600 font-bold">{{ timer }}</span>
+          <span class="absolute -right-1 bottom-0.5 translate-x-full ">secondes</span>
+        </div>
+        <div class="mb-2 w-60">
           <label for="">Pays:</label>
           <div class="relative">
-            <input v-model="userCountry" type="text" placeholder="Entrez" class="w-full p-2 border rounded"/>
+            <input v-model="userCountry" type="text" placeholder="Entrez le nom du pays..." class="w-full p-2 border rounded"/>
             <span class="absolute right-0 translate-x-full top-1/2 -translate-y-1/2 transform pl-4" v-if="showResult" :class="{'text-green-500': isCountryCorrect, 'text-red-500': !isCountryCorrect}">
               {{ currentFlag.country }}
             </span>
           </div>
         </div>
-        <div class="mb-4 w-60">
+        <div class="mb-2 w-60">
           <label for="">Capitale:</label>
           <div class="relative">
-            <input v-model="userCapital" type="text" placeholder="Entrez" class="w-full p-2 border rounded"/>
+            <input v-model="userCapital" type="text" placeholder="Entrez la capitale..." class="w-full p-2 border rounded"/>
             <span class="absolute right-0 translate-x-full top-1/2 -translate-y-1/2 transform pl-4" v-if="showResult" :class="{'text-green-500': isCapitalCorrect, 'text-red-500': !isCapitalCorrect}">
               {{ currentFlag.capital }}
             </span>
           </div>
         </div>
-        <div class="h-[400px] overflow-hidden mt-8" ref="svgContainer" v-html="worldSvg"></div>
+        <div class="relative h-full w-full mt-2">
+          <span class="italic text-sm">
+            Cliquez sur la carte pour choisir la localisation du pays
+          </span>
+        </div>
+        <div class="h-[400px] overflow-hidden" ref="svgContainer" v-html="worldSvg"></div>
         <div v-if="showResult" class="mt-4 w-40">
           <button @click="selectRandomFlag" class="w-full bg-blue-500 text-white p-2 rounded">Suivant</button>
         </div>
@@ -36,7 +48,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 import worldSvg from '../assets/world.svg?raw';
 import svgPanZoom from 'svg-pan-zoom';
@@ -52,6 +64,20 @@ const svgContainer = ref(null);
 const selectedCountry = ref('');
 const isSubmitted = ref(false);
 let panZoomInstance = null;
+const timer = ref(30);
+let timerInterval = null;
+
+const startTimer = () => {
+  timer.value = 30; // Reset timer to 30 seconds
+  clearInterval(timerInterval); // Clear any existing interval
+  timerInterval = setInterval(() => {
+    timer.value--;
+    if (timer.value <= 0) {
+      clearInterval(timerInterval);
+      checkAnswer(); // Automatically submit the answer when timer expires
+    }
+  }, 1000);
+};
 
 const normalizeText = (text) => {
   if (!text) return '';
@@ -68,6 +94,7 @@ const selectRandomFlag = () => {
     selectedCountry.value = '';
     isSubmitted.value = false;
     resetSvgColors();
+    startTimer();
   }
 };
 
@@ -85,6 +112,7 @@ const checkAnswer = () => {
   isSubmitted.value = true;
   highlightCorrectCountry();
   zoomToCorrectCountry();
+  clearInterval(timerInterval);
 };
 
 const resetSvgColors = () => {
@@ -176,13 +204,8 @@ onMounted(() => {
   addSvgEventListeners();
   initializeSvgPanZoom();
 });
-</script>
 
-<style scoped>
-.text-green-500 {
-  color: #48bb78;
-}
-.text-red-500 {
-  color: #f56565;
-}
-</style>
+onUnmounted(() => {
+  clearInterval(timerInterval); // Clear the timer when the component is unmounted
+});
+</script>
