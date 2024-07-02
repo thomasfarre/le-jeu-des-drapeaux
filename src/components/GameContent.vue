@@ -124,7 +124,7 @@ const resetSvgColors = () => {
 
 const fetchFlags = async () => {
   try {
-    const response = await axios.get('/data/easy_country.json');
+    const response = await axios.get('/data/easy-country.json');
     flags.value = response.data;
     selectRandomFlag();
   } catch (error) {
