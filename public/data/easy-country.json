@@ -35,11 +35,6 @@
     "flag": "/flags/ao.svg"
   },
   {
-    "country": "Antigua-et-Barbuda",
-    "capital": "Saint John's",
-    "flag": "/flags/ag.svg"
-  },
-  {
     "country": "Arabie saoudite",
     "capital": "Riyad",
     "flag": "/flags/sa.svg"
@@ -83,11 +78,6 @@
     "country": "Bangladesh",
     "capital": "Dacca",
     "flag": "/flags/bd.svg"
-  },
-  {
-    "country": "Barbade",
-    "capital": "Bridgetown",
-    "flag": "/flags/bb.svg"
   },
   {
     "country": "Belgique",
@@ -255,11 +245,6 @@
     "flag": "/flags/dj.svg"
   },
   {
-    "country": "Dominique",
-    "capital": "Roseau",
-    "flag": "/flags/dm.svg"
-  },
-  {
     "country": "Égypte",
     "capital": "Le Caire",
     "flag": "/flags/eg.svg"
@@ -338,11 +323,6 @@
     "country": "Grèce",
     "capital": "Athènes",
     "flag": "/flags/gr.svg"
-  },
-  {
-    "country": "Grenade",
-    "capital": "Saint-Georges",
-    "flag": "/flags/gd.svg"
   },
   {
     "country": "Guatemala",
@@ -455,11 +435,6 @@
     "flag": "/flags/kg.svg"
   },
   {
-    "country": "Kiribati",
-    "capital": "Tarawa",
-    "flag": "/flags/ki.svg"
-  },
-  {
     "country": "Koweït",
     "capital": "Koweït",
     "flag": "/flags/kw.svg"
@@ -530,11 +505,6 @@
     "flag": "/flags/mw.svg"
   },
   {
-    "country": "Maldives",
-    "capital": "Malé",
-    "flag": "/flags/mv.svg"
-  },
-  {
     "country": "Mali",
     "capital": "Bamako",
     "flag": "/flags/ml.svg"
@@ -550,11 +520,6 @@
     "flag": "/flags/ma.svg"
   },
   {
-    "country": "Maurice",
-    "capital": "Port-Louis",
-    "flag": "/flags/mu.svg"
-  },
-  {
     "country": "Mauritanie",
     "capital": "Nouakchott",
     "flag": "/flags/mr.svg"
@@ -563,11 +528,6 @@
     "country": "Mexique",
     "capital": "Mexico",
     "flag": "/flags/mx.svg"
-  },
-  {
-    "country": "Micronésie",
-    "capital": "Palikir",
-    "flag": "/flags/fm.svg"
   },
   {
     "country": "Moldavie",
@@ -598,11 +558,6 @@
     "country": "Namibie",
     "capital": "Windhoek",
     "flag": "/flags/na.svg"
-  },
-  {
-    "country": "Nauru",
-    "capital": "Yaren",
-    "flag": "/flags/nr.svg"
   },
   {
     "country": "Népal",
@@ -655,19 +610,9 @@
     "flag": "/flags/pk.svg"
   },
   {
-    "country": "Palaos",
-    "capital": "Ngerulmud",
-    "flag": "/flags/pw.svg"
-  },
-  {
     "country": "Panama",
     "capital": "Panama",
     "flag": "/flags/pa.svg"
-  },
-  {
-    "country": "Papouasie-Nouvelle-Guinée",
-    "capital": "Port Moresby",
-    "flag": "/flags/pg.svg"
   },
   {
     "country": "Paraguay",
@@ -725,34 +670,9 @@
     "flag": "/flags/rw.svg"
   },
   {
-    "country": "Saint-Christophe-et-Niévès",
-    "capital": "Basseterre",
-    "flag": "/flags/kn.svg"
-  },
-  {
-    "country": "Saint-Marin",
-    "capital": "Saint-Marin",
-    "flag": "/flags/sm.svg"
-  },
-  {
-    "country": "Saint-Vincent-et-les-Grenadines",
-    "capital": "Kingstown",
-    "flag": "/flags/vc.svg"
-  },
-  {
-    "country": "Sainte-Lucie",
-    "capital": "Castries",
-    "flag": "/flags/lc.svg"
-  },
-  {
     "country": "Samoa",
     "capital": "Apia",
     "flag": "/flags/ws.svg"
-  },
-  {
-    "country": "São Tomé-et-Principe",
-    "capital": "São Tomé",
-    "flag": "/flags/st.svg"
   },
   {
     "country": "Sénégal",
@@ -763,11 +683,6 @@
     "country": "Serbie",
     "capital": "Belgrade",
     "flag": "/flags/rs.svg"
-  },
-  {
-    "country": "Seychelles",
-    "capital": "Victoria",
-    "flag": "/flags/sc.svg"
   },
   {
     "country": "Sierra Leone",
@@ -865,16 +780,6 @@
     "flag": "/flags/tg.svg"
   },
   {
-    "country": "Tonga",
-    "capital": "Nuku'alofa",
-    "flag": "/flags/to.svg"
-  },
-  {
-    "country": "Trinité-et-Tobago",
-    "capital": "Port-d'Espagne",
-    "flag": "/flags/tt.svg"
-  },
-  {
     "country": "Tunisie",
     "capital": "Tunis",
     "flag": "/flags/tn.svg"
@@ -890,11 +795,6 @@
     "flag": "/flags/tr.svg"
   },
   {
-    "country": "Tuvalu",
-    "capital": "Funafuti",
-    "flag": "/flags/tv.svg"
-  },
-  {
     "country": "Ukraine",
     "capital": "Kiev",
     "flag": "/flags/ua.svg"
@@ -903,11 +803,6 @@
     "country": "Uruguay",
     "capital": "Montevideo",
     "flag": "/flags/uy.svg"
-  },
-  {
-    "country": "Vanuatu",
-    "capital": "Port-Vila",
-    "flag": "/flags/vu.svg"
   },
   {
     "country": "Vatican",
